@@ -270,14 +270,14 @@ const BSCTESTNETCoins = [
 ]
 
 const COINS = new Map();
-COINS.set(chains.ChainId.MAINNET, MAINNETCoins);
-COINS.set(chains.ChainId.ROPSTEN, ROPSTENCoins);
-COINS.set(chains.ChainId.RINKEBY, RINKEBYCoins);
-COINS.set(chains.ChainId.GÖRLI, GÖRLICoins);
-COINS.set(chains.ChainId.KOVAN, KOVANCoins);
-COINS.set(chains.ChainId.AUTONITY, AUTONITYCoins);
-COINS.set(chains.ChainId.DEVNET, DEVNETCoins);
-COINS.set(chains.ChainId.PARASTATE, PARASTATECoins);
-COINS.set(chains.ChainId.GANCHE, GANACHECoins);
-COINS.set(chains.ChainId.BSCTESTNET, BSCTESTNETCoins);
+COINS.set(chains.CHAIN_TYPE.MAINNET, MAINNETCoins);
+COINS.set(chains.CHAIN_TYPE.ROPSTEN, ROPSTENCoins);
+COINS.set(chains.CHAIN_TYPE.RINKEBY, RINKEBYCoins);
+COINS.set(chains.CHAIN_TYPE.GÖRLI, GÖRLICoins);
+COINS.set(chains.CHAIN_TYPE.KOVAN, KOVANCoins);
+COINS.set(chains.CHAIN_TYPE.AUTONITY, AUTONITYCoins);
+COINS.set(chains.CHAIN_TYPE.DEVNET, DEVNETCoins);
+COINS.set(chains.CHAIN_TYPE.PARASTATE, PARASTATECoins);
+COINS.set(chains.CHAIN_TYPE.GANCHE, GANACHECoins);
+COINS.set(chains.CHAIN_TYPE.BSCTESTNET, BSCTESTNETCoins);
 export default COINS

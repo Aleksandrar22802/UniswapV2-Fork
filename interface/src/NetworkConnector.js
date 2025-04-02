@@ -13,22 +13,23 @@ import {
 import COINS from "./constants/coins";
 import * as chains from "./constants/chains";
 
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: "#ff0000",
-            contrastText: "#ffffff",
-        },
-        secondary: {
-            main: "#9e9e9e",
-            contrastText: "#ffffff",
-        },
-    },
-});
+// const theme = createTheme({
+//     palette: {
+//         primary: {
+//             main: "#ff0000",
+//             contrastText: "#ffffff",
+//         },
+//         secondary: {
+//             main: "#9e9e9e",
+//             contrastText: "#ffffff",
+//         },
+//     },
+// });
 
-const autoReconnectDelay = 5000;
+// const autoReconnectDelay = 5000;
 
 const NetworkConnector = (props) => {
+
     const [isConnected, setConnected] = useState(true);
 
     let network = Object.create({})
@@ -55,10 +56,10 @@ const NetworkConnector = (props) => {
             await getNetwork(network.provider).then(async (chainId) => {
                 // Set chainID
                 network.chainID = chainId;
-                if (chains.networks.includes(chainId)) {
+                if (chains.chainIdList.includes(chainId)) {
                     // Get the router using the chainID
                     network.router = await getRouter(
-                        chains.routerAddress.get(chainId),
+                        chains.chainAddressMap.get(chainId),
                         network.signer
                     );
                     // Get default coins for network
@@ -108,8 +109,7 @@ const NetworkConnector = (props) => {
         }, 1000);
     }
 
-    const fetchData = async () => {
-    {
+    const initConnection = async () => {
         // Initial setup
         console.log("Initial hook");
 
@@ -127,7 +127,7 @@ const NetworkConnector = (props) => {
     }
 
     useEffect(() => {
-        fetchData();
+        initConnection();
     }, []);
 
     const renderNotConnected = () => {
