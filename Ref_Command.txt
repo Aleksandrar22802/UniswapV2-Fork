@@ -1,0 +1,8 @@
+1. cd protocol
+2. yarn
+3. npm install hardhat
+4. npx hardhat node
+    here, you must set your wallet's private key to hardhat.config.ts
+    then, download compiler, Generating typings for: 43 artifacts in dir: typechain-types for target: ethers-v6
+    then you can fix deploy ts files compile error.
+5. npx hardhat deploy --network localhost

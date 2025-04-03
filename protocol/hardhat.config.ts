@@ -6,7 +6,7 @@ import "hardhat-deploy-ethers";
 
 const PRIVATE_KEY =
   process.env.PRIVATE_KEY ||
-  "";
+  "cbf123d839ab64b24e10101ef066246cf8ebb4bdca8a1158293eddcf74ed17d4";
 const SECOND_PRIVATE_KEY =
   process.env.SECOND_PRIVATE_KEY ||
   "";
