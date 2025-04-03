@@ -1,12 +1,10 @@
 export const MenuItems = [
     {
-        title: "Swap",
+        title: "Liquidity",
         url: "/",
-        cName: "nav-links",
     },
     {
-        title: "Liquidity",
-        url: "/liquidity",
-        cName: "nav-links",
+        title: "Swap",
+        url: "/swap",
     },
 ];

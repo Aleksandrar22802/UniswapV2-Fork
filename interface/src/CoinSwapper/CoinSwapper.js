@@ -310,7 +310,7 @@ function CoinSwapper(props) {
     });
 
     return (
-        <div>
+        <div className="sub-page-swap">
             {/* Dialog Windows */}
             <CoinDialog
                 open={dialog1Open}

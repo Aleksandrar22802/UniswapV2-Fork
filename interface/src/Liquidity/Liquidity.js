@@ -44,7 +44,7 @@ function Liquidity(props) {
     };
 
     return (
-        <div>
+        <div className="sub-page-liquidity">
             <Container>
                 <Paper className={classes.paperContainer}>
                     <Typography variant="h5" className={classes.title}>
