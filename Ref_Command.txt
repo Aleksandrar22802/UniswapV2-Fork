@@ -1,3 +1,7 @@
+///////////////////////////////////////////////////////////////////////////////////////
+
+First you need to run following commands to get compile environment
+
 1. cd protocol
 2. yarn
 3. npm install hardhat
@@ -6,3 +10,31 @@
     then, download compiler, Generating typings for: 43 artifacts in dir: typechain-types for target: ethers-v6
     then you can fix deploy ts files compile error.
 5. npx hardhat deploy --network localhost
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+Next you need to run commands from READ.me.
+
+1. 
+// npx hardhat run deploy/core/01-deploy-UniswapV2Factory.ts --network holeskyTestnet
+npx hardhat deploy --tags UniswapV2Factory --network holeskyTestnet
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+Relative Information for Deploy is as follows : 
+
+deployer_1 = Account_T1
+deployer_2 = Account_T2
+
+network.name = holeskyTestnet
+deployer_1 = 0xA6a01706Cf76D95C38695923525fD5F29dB4b6E4 ( = wallet public key = wallet address)
+deployer_2 = 0x7cbDc2b8B9A62a01d9D1658fFACd076928b35ad9 ( = wallet public key = wallet address)
+
+UniswapV2Factory => 
+    signer = deployer_1
+    feeToSetter = deployer_1
+    uniswapV2Factory.address = 0x27528305ed51ED141d9BBE8f19Be02b493626078
+    CODE HASH = 0x9caff2cce4e27dd473f096c99efe0853916cb5f46d88b841b09a2d150fa7a518
+    uniswapV2FactoryContract.getAddress() = Promise { <pending> }
+    https://holesky.etherscan.io/address/0x27528305ed51ED141d9BBE8f19Be02b493626078
+
