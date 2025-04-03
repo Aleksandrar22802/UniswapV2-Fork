@@ -12,7 +12,7 @@ import { addLiquidity, quoteAddLiquidity } from "./LiquidityFunctions";
 import CoinField from "../CoinSwapper/CoinField";
 import CoinDialog from "../CoinSwapper/CoinDialog";
 import LoadingButton from "../Components/LoadingButton";
-import WrongNetwork from "../Components/wrongNetwork";
+import WrongNetwork from "../Components/WrongNetwork";
 
 const styles = (theme) => ({
     paperContainer: {

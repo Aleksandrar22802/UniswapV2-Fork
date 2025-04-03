@@ -1,8 +1,11 @@
 import { useEffect, useState, useRef } from "react";
-import { createTheme, ThemeProvider } from "@material-ui/core";
-import { Contract, ethers } from "ethers";
+// import { createTheme, ThemeProvider } from "@material-ui/core";
+// import { Contract, ethers } from "ethers";
+import { ethers } from "ethers";
 // import { SnackbarProvider } from "notistack";
-import ConnectWalletPage from "./Components/connectWalletPage";
+
+// import { useAccount, useConnect } from 'wagmi'
+
 import {
     getAccount,
     getFactory,
@@ -10,6 +13,10 @@ import {
     getNetwork,
     getWeth,
 } from "./EthereumFunctions";
+
+import ConnectWalletPage from "./Components/ConnectWalletPage";
+
+
 import COINS from "./constants/coins";
 import * as chains from "./constants/chains";
 
@@ -30,7 +37,7 @@ import * as chains from "./constants/chains";
 
 const NetworkConnector = (props) => {
 
-    const [isConnected, setConnected] = useState(true);
+    const [isConnected, setConnected] = useState(false);
 
     let network = Object.create({})
     network.provider = useRef(null);
@@ -46,13 +53,38 @@ const NetworkConnector = (props) => {
 
     async function setupConnection() {
         try {
-            console.log('lets go!');
-            network.provider = new ethers.providers.Web3Provider(window.ethereum);
-            network.signer = await network.provider.getSigner();
-            await getAccount().then(async (result) => {
-                network.account = result;
-            });
+            console.log('-------------- setupConnection --------------');
 
+            if (network.provider.current === null) {
+                network.provider = new ethers.providers.Web3Provider(window.ethereum);
+                if (network.provider.current === undefined || network.provider.current === null) {
+                    return;
+                }
+            }
+            
+            if (network.signer.current === null) {
+                network.signer = await network.provider.getSigner();
+                if (network.signer.current === undefined || network.signer.current === null) {
+                    return;
+                }
+            }
+
+            if (network.account.current === null) {
+                console.log("getAccount...");
+                // await getAccount().then(async (result) => {
+                //     network.account = result;
+                // });
+                network.account = await getAccount();
+                if (network.account.current === undefined || network.account.current === null) {
+                    return;
+                }
+            }
+            else
+            {
+                console.log("account = " + network.account);
+            }
+
+            console.log("getNetwork...");
             await getNetwork(network.provider).then(async (chainId) => {
                 // Set chainID
                 network.chainID = chainId;
@@ -78,13 +110,19 @@ const NetworkConnector = (props) => {
                         );
                     });
                     setConnected(true);
-                } else {
-                    console.log("Wrong network mate.");
+
+                    console.log("network is ... ");
+                    console.log(network);
+                } 
+                else 
+                {
                     setConnected(false);
                 }
             });
 
         } catch (err) {
+            setConnected(false);
+            console.log('setupConnection error...');
             console.log(err);
         }
     }
@@ -92,16 +130,12 @@ const NetworkConnector = (props) => {
     const createListener = async () => {
         return setInterval(async () => {
             try {
-                // Check the account has not changed
-                const account = await getAccount();
-                if (account !== network.account) {
+                // console.log("running createListener 1...");
+                if (isConnected === false || await getAccount() !== network.account) 
+                {
+                    // console.log("running createListener 2...");
                     await setupConnection();
                 }
-                // const chainID = await getNetwork(network.provider);
-                // if (chainID !== network.chainID){
-                //   setConnected(false);
-                //   await setupConnection();
-                // }
             } catch (e) {
                 setConnected(false);
                 await setupConnection();
@@ -111,40 +145,35 @@ const NetworkConnector = (props) => {
 
     const initConnection = async () => {
         // Initial setup
-        console.log("Initial hook");
+        console.log("initConnection...");
 
         await setupConnection();
-        console.log("network: ", network);
 
         // Start background listener
         if (backgroundListener.current != null) {
             clearInterval(backgroundListener.current);
         }
 
-        const listener = createListener();
-        backgroundListener.current = listener;
-        clearInterval(backgroundListener.current);
+        backgroundListener.current = createListener();
+        // clearInterval(backgroundListener.current);
     }
 
     useEffect(() => {
         initConnection();
     }, []);
 
-    const renderNotConnected = () => {
-        console.log("Rendering");
-        return (
-            <div className="App">
+    return (
+        <>
+            {
+                isConnected === true ? 
+                <div> 
+                    {props.render(network)}
+                </div>
+                :
                 <div>
                     <ConnectWalletPage />
                 </div>
-            </div>
-        );
-    };
-
-    return (
-        <>
-            {!isConnected && renderNotConnected()}
-            {isConnected && <div> {props.render(network)}</div>}
+            }
         </>
     );
 };

@@ -26,7 +26,7 @@ import {
 import CoinField from "./CoinField";
 import CoinDialog from "./CoinDialog";
 import LoadingButton from "../Components/LoadingButton";
-import WrongNetwork from "../Components/wrongNetwork";
+import WrongNetwork from "../Components/WrongNetwork";
 import COINS from "../constants/coins";
 import * as chains from "../constants/chains";
 
@@ -417,7 +417,7 @@ function CoinSwapper(props) {
                 alignItems="flex-end"
             >
                 <p>
-                    Alternative Uniswap Interface | Get AUT for use in the bakerloo testnet{" "}
+                    My UniswapV2 | Get AUT for use in the bakerloo testnet{" "}
                     <a href="https://faucet.bakerloo.autonity.network/">here</a>
                 </p>
             </Grid>

@@ -1,7 +1,14 @@
 {
-  "name": "react-uniswap",
-  "version": "0.1.0",
+  "name": "UniswapV2-Fork",
+  "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "deploy": "gh-pages -d build",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider & react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@babel/core": "^7.14.3",
     "@testing-library/jest-dom": "^5.11.4",
@@ -24,14 +31,6 @@
     "@material-ui/icons": "^4.11.2",
     "prop-types": "^15.7.2",
     "notistack": "^1.0.10"
-  },
-  "homepage": "https://ben-haslam.github.io/Alternative-Uniswap-Interface/",
-  "scripts": {
-    "deploy": "gh-pages -d build",
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider & react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

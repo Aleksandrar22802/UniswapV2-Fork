@@ -8,13 +8,12 @@ class NavBar extends Component {
 
     render() {
         return (
-            <nav>
-                <div className="Title">
+            <>
+                <div className="nav-bar-title">
                     <h1 className="navbar-logo">
                         Uniswap V2 Interface
                     </h1>
                 </div>
-
                 <div className="NavbarItems">
                     <ul className={`nav-menu`}>
                         {MenuItems.map((item, index) => {
@@ -28,7 +27,7 @@ class NavBar extends Component {
                         })}
                     </ul>
                 </div>
-            </nav>
+            </>
         );
     }
 }
