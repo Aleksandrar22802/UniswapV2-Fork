@@ -49,6 +49,7 @@ const deployUniswapV2Factory: DeployFunction = async function (
     log(uniswapV2FactoryContract.getAddress());
 
     // verify if not on a local chain
+    // if (!developmentChains.includes(network.name)) {
     if (developmentChains.includes(network.name)) {
         console.log("Wait before verifying");
         // await verify(uniswapV2Factory.address, [deployer]);

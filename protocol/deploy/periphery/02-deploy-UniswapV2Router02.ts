@@ -9,7 +9,7 @@ const deployUniswapV2Router02: DeployFunction = async function (
 ) {
     const { getNamedAccounts, deployments, network, } = hre;
     const { deploy, log } = deployments;
-    const { deployer } = await getNamedAccounts();
+    const { deployer, deployer_1, deployer_2 } = await getNamedAccounts();
 
     log("----------------------------------------------------");
     log("Deploying UniswapV2Router02 and waiting for confirmations...");
@@ -18,6 +18,12 @@ const deployUniswapV2Router02: DeployFunction = async function (
     const factoryAddress = await (await ethers.getContract("UniswapV2Factory")).getAddress();
     const wethAddress = await (await ethers.getContract("WETH9")).getAddress();
 
+    log("factoryAddress = ");
+    log(factoryAddress);
+    log("wethAddress = ");
+    log(wethAddress);
+
+    /*
     const uniswapV2Router02 = await deploy("UniswapV2Router02", {
         from: deployer,
         args: [
@@ -28,9 +34,24 @@ const deployUniswapV2Router02: DeployFunction = async function (
         // we need to wait if on a live network so we can verify properly
         waitConfirmations: blockConfirmation[network.name] || 1,
     });
+    */
+    const uniswapV2Router02 = await deploy("UniswapV2Router02", {
+        from: deployer_1,
+        args: [
+            factoryAddress, // factory
+            wethAddress // weth
+        ],
+        log: true,
+        // no need to wait block because of testnet
+        // // we need to wait if on a live network so we can verify properly
+        // waitConfirmations: blockConfirmation[network.name] || 1,
+    });
+
+    log("uniswapV2Router02.address = " + uniswapV2Router02.address);
 
     // verify if not on a local chain
-    if (!developmentChains.includes(network.name)) {
+    // if (!developmentChains.includes(network.name)) {
+    if (developmentChains.includes(network.name)) {
         console.log("Wait before verifying");
         await verify(uniswapV2Router02.address, [factoryAddress, wethAddress]);
     }
