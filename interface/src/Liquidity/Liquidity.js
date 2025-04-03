@@ -9,7 +9,7 @@ import {
 
 import SwitchButton from "./SwitchButton";
 import LiquidityDeployer from "./LiquidityDeployer";
-import LiquidityRemover from "./RemoveLiquidity";
+import LiquidityRemover from "./LiquidityRemove";
 
 const styles = (theme) => ({
     paperContainer: {
@@ -33,16 +33,7 @@ const useStyles = makeStyles(styles);
 
 function Liquidity(props) {
     const classes = useStyles();
-
     const [deploy, setDeploy] = React.useState(true);
-
-    const deploy_or_remove = (deploy) => {
-        if (deploy === true) {
-            return <LiquidityDeployer network={props.network} />;
-        }
-        return <LiquidityRemover network={props.network} />;
-    };
-
     return (
         <div className="sub-page-liquidity">
             <Container>
@@ -50,8 +41,12 @@ function Liquidity(props) {
                     <Typography variant="h5" className={classes.title}>
                         <SwitchButton setDeploy={setDeploy} />
                     </Typography>
-
-                    {deploy_or_remove(deploy)}
+                    {
+                        deploy === true ? 
+                        <LiquidityDeployer network={props.network} />
+                        :
+                        <LiquidityRemover network={props.network} />
+                    }
                 </Paper>
             </Container>
         </div>

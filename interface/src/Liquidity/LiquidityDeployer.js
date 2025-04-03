@@ -142,9 +142,7 @@ function LiquidityDeployer(props) {
         );
     };
 
-
-
-    const deploy = () => {
+    const onClickDeploy = () => {
         console.log("Attempting to deploy liquidity...");
         setLoading(true);
 
@@ -490,7 +488,7 @@ function LiquidityDeployer(props) {
                     valid={isButtonEnabled()}
                     success={false}
                     fail={false}
-                    onClick={deploy}
+                    onClick={onClickDeploy}
                 >
                     <AccountBalanceIcon className={classes.buttonIcon} />
                     Deploy
