@@ -1,4 +1,7 @@
 {
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IUniswapV1Factory",
+  "sourceName": "contracts/periphery/interfaces/V1/IUniswapV1Factory.sol",
   "abi": [
     {
       "inputs": [
@@ -20,20 +23,8 @@
       "type": "function"
     }
   ],
-  "evm": {
-    "bytecode": {
-      "linkReferences": {},
-      "object": "",
-      "opcodes": "",
-      "sourceMap": ""
-    },
-    "deployedBytecode": {
-      "immutableReferences": {},
-      "linkReferences": {},
-      "object": "",
-      "opcodes": "",
-      "sourceMap": ""
-    }
-  },
-  "bytecode": ""
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
 }

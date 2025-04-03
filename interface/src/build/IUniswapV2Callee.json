@@ -1,4 +1,7 @@
 {
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IUniswapV2Callee",
+  "sourceName": "contracts/core/interfaces/IUniswapV2Callee.sol",
   "abi": [
     {
       "inputs": [
@@ -29,20 +32,8 @@
       "type": "function"
     }
   ],
-  "evm": {
-    "bytecode": {
-      "linkReferences": {},
-      "object": "",
-      "opcodes": "",
-      "sourceMap": ""
-    },
-    "deployedBytecode": {
-      "immutableReferences": {},
-      "linkReferences": {},
-      "object": "",
-      "opcodes": "",
-      "sourceMap": ""
-    }
-  },
-  "bytecode": ""
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
 }

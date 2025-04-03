@@ -60,10 +60,14 @@ Deploying UniswapV2Router02 =>
 
 --- [3]'s Output is as follows : 
 Deploying TokenA => 
+    signer = deployer_1
     tokenA.address = 0x52Ecfeaa3339d7534727F8B9091b1b2bC054E399
     https://holesky.etherscan.io/address/0x52Ecfeaa3339d7534727F8B9091b1b2bC054E399
 Deploying TokenB => 
+    signer = deployer_2
     tokenB.address = 0x558326A938E7d76D470672e611a2821AAa0279E3
     https://holesky.etherscan.io/address/0x558326A938E7d76D470672e611a2821AAa0279E3
 Deploying UniswapV2Pair =>
+    Here we use UniswapV2Factory's getPair, createPair functions.
     pairAddress = 0xea3647caDedC66db60F2EC487035CDC4F0Cc3d82
+
