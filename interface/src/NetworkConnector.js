@@ -39,81 +39,98 @@ const NetworkConnector = (props) => {
 
     const [isConnected, setIsConnected] = useState(false);
 
-    let network = Object.create({})
-    network.provider = useRef(null);
-    network.signer = useRef(null);
-    network.account = useRef(null);
-    network.chainID = useRef(null);
-    network.router = useRef(null);
-    network.factory = useRef(null);
-    network.weth = useRef(null);
-    network.coins = [];
+    const [provider, setProvider] = useState(null);
+    const [signer, setSigner] = useState(null);
+    const [account, setAccount] = useState(null);
+    const [chainID, setChainID] = useState(null);
+    const [router, setRouter] = useState(null);
+    const [factory, setFactory] = useState(null);
+    const [weth, setWeth] = useState(null);
+    const [coins, setCoins] = useState([]);
 
-    const backgroundListener = useRef(null);
+    const [bgListener, setBgListener] = useState(null);
 
     async function setupConnection() {
         try {
             console.log('-------------- setupConnection --------------');
 
+            let localProvider = null;
+            let localSigner = null;
+            let localAccount = null;
+
             console.log("getProvider...");
-            if (network.provider == null || network.provider.current === undefined || network.provider.current == null) {
-                network.provider = new ethers.providers.Web3Provider(window.ethereum);
-                if (network.provider === undefined || network.provider == null) {
+            if (provider == null) {
+                localProvider = new ethers.providers.Web3Provider(window.ethereum);
+                if (localProvider === undefined || localProvider == null) {
                     return;
                 }
+                await setProvider(localProvider);
+            } else {
+                localProvider = provider;
             }
 
             console.log("getSigner...");
-            if (network.signer == null || network.signer.current === undefined || network.signer.current == null) {
-                network.signer = await network.provider.getSigner();
-                if (network.signer === undefined || network.signer == null) {
+            if (signer == null) {
+                localSigner = await localProvider.getSigner();
+                if (localSigner === undefined || localSigner == null) {
                     return;
                 }
+                await setSigner(localSigner);
+            } else {
+                localSigner = signer;
             }
 
             console.log("getAccount...");
-            if (network.account == null || network.account.current === undefined || network.account.current === null) {
-                network.account = await getAccount();
-                if (network.account === undefined || network.account == null) {
+            if (account == null) {
+                localAccount = await getAccount();
+                if (localAccount === undefined || localAccount == null) {
                     return;
                 }
+                await setAccount(localAccount);
+            } else {
+                localAccount = account;
             }
 
             console.log("getNetwork...");
-            await getNetwork(network.provider).then(async (chainId) => {
+            await getNetwork(localProvider).then(async (chainId) => {
                 console.log("chainId = " + chainId);
                 // Set chainID
-                network.chainID = chainId;
+                await setChainID(chainId);
                 if (chains.chainIdList.includes(chainId)) {
                     // Get the router using the chainID
-                    network.router = await getRouter(
+                    let localRouter = await getRouter(
                         chains.routerContractAddressMap.get(chainId),
-                        network.signer
+                        localSigner
                     );
-                    // Get default coins for network
-                    network.coins = COINS.get(chainId);
-                    // Get Weth address from router
-                    await network.router.WETH().then((wethAddress) => {
-                        // for WETH Debug
-                        console.log("wethAddress........................");
-                        console.log(wethAddress);
+                    await setRouter(localRouter);
 
-                        network.weth = getWeth(wethAddress, network.signer);
-                        // Set the value of the weth address in the default coins array
-                        network.coins[0].address = wethAddress;
+                    // Get default coins for network
+                    let localCoins = COINS.get(chainId);
+                    await setCoins(localCoins);
+
+                    // Get Weth address from router
+                    await localRouter.WETH().then(async (wethAddress) => {
+                        // for WETH Debug
+                        // console.log("wethAddress........................");
+                        // console.log(wethAddress);
+
+                        let localWeth = getWeth(wethAddress, localSigner);
+                        await setWeth(localWeth);
+
+                        // // Set the value of the weth address in the default coins array
+                        // network.coins[0].address = wethAddress;
                     });
+
                     // Get the factory address from the router
-                    await network.router.factory().then((factory_address) => {
-                        network.factory = getFactory(
-                            factory_address,
-                            network.signer
+                    await localRouter.factory().then(async (factoryAddress) => {
+                        let localFactory = getFactory(
+                            factoryAddress,
+                            localSigner
                         );
+                        await setFactory(localFactory);
                     });
 
                     setIsConnected(true);
-
-                    // console.log("network is ... ");
-                    // console.log(network);
                 } 
                 else 
                 {
@@ -132,14 +149,20 @@ const NetworkConnector = (props) => {
         return setInterval(async () => {
             try {
                 // console.log("running createListener 1...");
-                let account = await getAccount();
-                if (account != network.account) 
+                let localAccount = await getAccount();
+                if (localAccount != account)
                 {
+                    // console.log("----------------------------------");
+                    // console.log("account = " + account);
+                    // console.log("localAccount = " + localAccount);
+        
                     // console.log("running createListener 2...");
                     await setupConnection();
+                } else {
+                    // await setIsConnected(true);
                 }
             } catch (err) {
-                setIsConnected(false);
+                await setIsConnected(false);
                 console.log('getAccount error...');
                 console.log(err);
             }
@@ -153,22 +176,39 @@ const NetworkConnector = (props) => {
         await setupConnection();
 
         // Start background listener
-        if (backgroundListener.current != null) {
-            clearInterval(backgroundListener.current);
+        if (bgListener != null) {
+            clearInterval(bgListener);
         }
 
-        backgroundListener.current = createListener();
-        clearInterval(backgroundListener.current);
+        let localBgListener = await createListener();
+        await setBgListener(localBgListener);
+        // clearInterval(localBgListener);
     }
 
     useEffect(() => {
+        console.log("####################################");
         initConnection();
     }, []);
+
+    let network = null;
+    if (isConnected === true)
+    {
+        network = {
+            provider,
+            signer,
+            account,
+            chainID,
+            router,
+            factory,
+            weth,
+            coins,
+        };
+    }
 
     return (
         <>
             {
-                isConnected == true ? 
+                network != null ? 
                 <div> 
                     {props.render(network)}
                 </div>

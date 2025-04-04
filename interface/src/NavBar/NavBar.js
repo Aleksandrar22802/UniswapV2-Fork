@@ -1,16 +1,27 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { useLocation } from 'react-router-dom'
+
 import { MenuItems } from "./MenuItems";
 import "./NavBar.css";
 
 class NavBar extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             linkIndex: 0,
         };
     }    
+
+    componentDidUpdate() {
+    }
+
+    componentDidMount() {
+        if (window.location.href.indexOf("swap") >= 0) {
+            this.setState({linkIndex: 1});
+        }
+    }
 
     onClickLink = (index) => {
         document.getElementById("nave-menu-link-0").classList.remove("selected");

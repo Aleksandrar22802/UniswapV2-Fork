@@ -55,16 +55,12 @@ function ConnectWalletPage() {
                 </h1>
             </div>
 
-            <Container>
-                <Paper className={classes.paperContainer}>
-                    <Typography
-                        variant="h3"
-                        className={classes.title}
-                        color="common.white"
-                    >
-                        Welcome!, Please connect Metamask wallet.
-                    </Typography>
-                </Paper>
+            <Container
+                className="sub-page-connect"
+            >
+                <span>
+                    Welcome!, Please connect Metamask wallet.
+                </span>
             </Container>
         </div>
     );

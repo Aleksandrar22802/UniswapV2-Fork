@@ -55,6 +55,9 @@ function LiquidityDeployer(props) {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
 
+    console.log("LiquidityDeployer.props...");
+    console.log(props);
+
     // Stores a record of whether their respective dialog window is open
     const [dialog1Open, setDialog1Open] = React.useState(false);
     const [dialog2Open, setDialog2Open] = React.useState(false);
@@ -142,9 +145,7 @@ function LiquidityDeployer(props) {
         );
     };
 
-
-
-    const deploy = () => {
+    const onClickDeploy = () => {
         console.log("Attempting to deploy liquidity...");
         setLoading(true);
 
@@ -490,7 +491,7 @@ function LiquidityDeployer(props) {
                     valid={isButtonEnabled()}
                     success={false}
                     fail={false}
-                    onClick={deploy}
+                    onClick={onClickDeploy}
                 >
                     <AccountBalanceIcon className={classes.buttonIcon} />
                     Deploy

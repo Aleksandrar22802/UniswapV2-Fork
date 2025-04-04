@@ -9,7 +9,7 @@ import {
 
 import SwitchButton from "./SwitchButton";
 import LiquidityDeployer from "./LiquidityDeployer";
-import LiquidityRemover from "./RemoveLiquidity";
+import LiquidityRemover from "./LiquidityRemove";
 
 const styles = (theme) => ({
     paperContainer: {
@@ -33,15 +33,10 @@ const useStyles = makeStyles(styles);
 
 function Liquidity(props) {
     const classes = useStyles();
-
     const [deploy, setDeploy] = React.useState(true);
 
-    const deploy_or_remove = (deploy) => {
-        if (deploy === true) {
-            return <LiquidityDeployer network={props.network} />;
-        }
-        return <LiquidityRemover network={props.network} />;
-    };
+    console.log("Liquidity.props...");
+    console.log(props);
 
     return (
         <div className="sub-page-liquidity">
@@ -50,23 +45,14 @@ function Liquidity(props) {
                     <Typography variant="h5" className={classes.title}>
                         <SwitchButton setDeploy={setDeploy} />
                     </Typography>
-
-                    {deploy_or_remove(deploy)}
+                    {
+                        deploy === true ? 
+                        <LiquidityDeployer network={props.network} />
+                        :
+                        <LiquidityRemover network={props.network} />
+                    }
                 </Paper>
             </Container>
-
-            <Grid
-                container
-                className={classes.footer}
-                direction="row"
-                justifyContent="center"
-                alignItems="flex-end"
-            >
-                <p>
-                    My UniswapV2 | Get AUT for use in the bakerloo testnet{" "}
-                    <a href="https://faucet.bakerloo.autonity.network/">here</a>
-                </p>
-            </Grid>
         </div>
     );
 }
