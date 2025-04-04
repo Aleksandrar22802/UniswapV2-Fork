@@ -124,7 +124,7 @@ function LiquidityRemover(props) {
         return (
             coin1.address &&
             coin2.address &&
-            isNaN(parsedInput) !== false &&
+            isNaN(parsedInput) === false &&
             0 < parsedInput &&
             parsedInput <= liquidityTokens
         );

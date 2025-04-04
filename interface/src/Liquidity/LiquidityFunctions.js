@@ -115,8 +115,8 @@ export async function removeLiquidity(
     routerContract,
     account,
     signer,
-    factory
-) {
+    factory) 
+{
     const token1 = new Contract(address1, ERC20.abi, signer);
     const token2 = new Contract(address2, ERC20.abi, signer);
 
@@ -145,15 +145,15 @@ export async function removeLiquidity(
 
     await pair.approve(routerContract.address, liquidity);
 
-    console.log([
-        address1,
-        address2,
-        Number(liquidity),
-        Number(amount1Min),
-        Number(amount2Min),
-        account,
-        deadline,
-    ]);
+    // console.log([
+    //     address1,
+    //     address2,
+    //     Number(liquidity),
+    //     Number(amount1Min),
+    //     Number(amount2Min),
+    //     account,
+    //     deadline,
+    // ]);
 
     if (address1 === wethAddress) {
         // Eth + Token
@@ -350,10 +350,10 @@ export async function quoteRemoveLiquidity(
     address2,
     liquidity,
     factory,
-    signer
-) {
+    signer) 
+{
     const pairAddress = await factory.getPair(address1, address2);
-    console.log("pair address", pairAddress);
+    // console.log("pair address", pairAddress);
     const pair = new Contract(pairAddress, PAIR.abi, signer);
 
     const reservesRaw = await fetchReserves(address1, address2, pair, signer); // Returns the reserves already formated as ethers

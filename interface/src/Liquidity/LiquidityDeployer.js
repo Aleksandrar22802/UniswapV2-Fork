@@ -129,7 +129,6 @@ function LiquidityDeployer(props) {
 
     // Determines whether the button should be enabled or not
     const isButtonEnabled = () => {
-
         // If both coins have been selected, and a valid float has been entered for both, which are less than the user's balances, then return true
         const parsedInput1 = parseFloat(field1Value);
         const parsedInput2 = parseFloat(field2Value);
@@ -180,9 +179,6 @@ function LiquidityDeployer(props) {
 
     // Called when the dialog window for coin1 exits
     const onToken1Selected = (address) => {
-        // console.log("onToken1Selected ...");
-        // console.log("address = " + address);
-
         // Close the dialog window
         setDialog1Open(false);
 

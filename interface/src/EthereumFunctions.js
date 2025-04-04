@@ -95,7 +95,6 @@ export async function getBalanceAndSymbol(
         if (address === weth_address)
         {
             const balanceRaw = await provider.getBalance(accountAddress);
-
             return {
                 balance: ethers.utils.formatEther(balanceRaw),
                 symbol: coins[0].abbr,

@@ -97,12 +97,12 @@ function CoinSwapper(props) {
 
     // Switches the top and bottom coins, this is called when users hit the swap button or select the opposite
     // token in the dialog (e.g. if coin1 is TokenA and the user selects TokenB when choosing coin2)
-    const switchFields = () => {
-        setCoin1(coin2);
-        setCoin2(coin1);
-        setField1Value(field2Value);
-        setReserves(reserves.reverse());
-    };
+    // const switchFields = () => {
+    //     setCoin1(coin2);
+    //     setCoin2(coin1);
+    //     setField1Value(field2Value);
+    //     setReserves(reserves.reverse());
+    // };
 
     // These functions take an HTML event, pull the data out and puts it into a state variable.
     const handleChange = {
@@ -126,15 +126,14 @@ function CoinSwapper(props) {
 
     // Determines whether the button should be enabled or not
     const isButtonEnabled = () => {
-
         // If both coins have been selected, and a valid float has been entered which is less than the user's balance, then return true
         const parsedInput1 = parseFloat(field1Value);
         const parsedInput2 = parseFloat(field2Value);
         return (
             coin1.address &&
             coin2.address &&
-            !isNaN(parsedInput1) &&
-            !isNaN(parsedInput2) &&
+            isNaN(parsedInput1) === false &&
+            isNaN(parsedInput2) === false &&
             0 < parsedInput1 &&
             parsedInput1 <= coin1.balance
         );
@@ -146,18 +145,52 @@ function CoinSwapper(props) {
         setDialog1Open(false);
 
         // If the user inputs the same token, we want to switch the data in the fields
-        if (address === coin2.address) {
-            switchFields();
-        }
+        // if (address === coin2.address) {
+        //     switchFields();
+        // }
         // We only update the values if the user provides a token
-        else if (address) {
+        if (address) 
+        {
+            if (address == coin2.address)
+            {
+                setCoin1({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+                return;
+            }
+    
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
-            getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.address, props.network.coins).then((data) => {
+            getBalanceAndSymbol(
+                props.network.account, 
+                address, 
+                props.network.provider, 
+                props.network.signer, 
+                props.network.weth.address, 
+                props.network.coins)
+            .then((data) => {
                 setCoin1({
                     address: address,
                     symbol: data.symbol,
                     balance: data.balance,
                 });
+            })
+            .catch((error) => {
+                console.log(error);
+                setCoin1({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+            });
+        }
+        else
+        {
+            setCoin1({
+                address: undefined,
+                symbol: undefined,
+                balance: undefined,
             });
         }
     };
@@ -168,18 +201,52 @@ function CoinSwapper(props) {
         setDialog2Open(false);
 
         // If the user inputs the same token, we want to switch the data in the fields
-        if (address === coin1.address) {
-            switchFields();
-        }
+        // if (address === coin1.address) {
+        //     switchFields();
+        // }
         // We only update the values if the user provides a token
-        else if (address) {
+        if (address) 
+        {
+            if (address == coin1.address)
+            {
+                setCoin2({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+                return;
+            }
+    
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
-            getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.address, props.network.coins).then((data) => {
+            getBalanceAndSymbol(
+                props.network.account, 
+                address, 
+                props.network.provider, 
+                props.network.signer, 
+                props.network.weth.address, 
+                props.network.coins)
+            .then((data) => {
                 setCoin2({
                     address: address,
                     symbol: data.symbol,
                     balance: data.balance,
                 });
+            })
+            .catch((error) => {
+                console.log(error);
+                setCoin2({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+            });
+        }
+        else
+        {
+            setCoin2({
+                address: undefined,
+                symbol: undefined,
+                balance: undefined,
             });
         }
     };
@@ -197,20 +264,20 @@ function CoinSwapper(props) {
             props.network.account,
             props.network.signer
         )
-            .then(() => {
-                setLoading(false);
+        .then(() => {
+            setLoading(false);
 
-                // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
-                setField1Value("");
-                enqueueSnackbar("Transaction Successful", { variant: "success" });
-            })
-            .catch((e) => {
-                setLoading(false);
-                enqueueSnackbar("Transaction Failed (" + e.message + ")", {
-                    variant: "error",
-                    autoHideDuration: 10000,
-                });
+            // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
+            setField1Value("");
+            enqueueSnackbar("Transaction Successful", { variant: "success" });
+        })
+        .catch((error) => {
+            setLoading(false);
+            enqueueSnackbar("Transaction Failed (" + error.message + ")", {
+                variant: "error",
+                autoHideDuration: 10000,
             });
+        });
     };
 
     // The lambdas within these useEffects will be called when a particular dependency is updated. These dependencies
@@ -223,14 +290,28 @@ function CoinSwapper(props) {
     // This means that when the user selects a different coin to convert between, or the coins are swapped,
     // the new reserves will be calculated.
     useEffect(() => {
-        console.log(
-            "Trying to get Reserves between:\n" + coin1.address + "\n" + coin2.address
-        );
-
-        if (coin1.address && coin2.address) {
-            getReserves(coin1.address, coin2.address, props.network.factory, props.network.signer, props.network.account).then(
-                (data) => setReserves(data)
+        if (coin1.address && coin2.address) 
+        {
+            console.log(
+                "Trying to get Reserves between:\n" + coin1.address + "\n" + coin2.address
             );
+            getReserves(
+                coin1.address, 
+                coin2.address, 
+                props.network.factory, 
+                props.network.signer, 
+                props.network.account)
+            .then((data) => { 
+                setReserves(data);
+            })
+            .catch((error) => {
+                console.log(error);
+                setReserves(["0.0", "0.0"]);
+            });
+        }
+        else
+        {
+            setReserves(["0.0", "0.0"]);
         }
     }, [coin1.address, coin2.address, props.network.account, props.network.factory, props.network.router, props.network.signer]);
 
@@ -239,16 +320,28 @@ function CoinSwapper(props) {
     // This means that if the user types a new value into the conversion box or the conversion rate changes,
     // the value in the output box will change.
     useEffect(() => {
-        if (isNaN(parseFloat(field1Value))) {
+        if (isNaN(parseFloat(field1Value))) 
+        {
             setField2Value("");
-        } else if (parseFloat(field1Value) && coin1.address && coin2.address) {
-            getAmountOut(coin1.address, coin2.address, field1Value, props.network.router, props.network.signer).then(
-                (amount) => setField2Value(amount.toFixed(7))
-            ).catch(e => {
-                console.log(e);
-                setField2Value("NA");
+        } 
+        else if (parseFloat(field1Value) && coin1.address && coin2.address) 
+        {
+            getAmountOut(
+                coin1.address, 
+                coin2.address, 
+                field1Value, 
+                props.network.router, 
+                props.network.signer)
+            .then((amount) => {
+                setField2Value(amount.toFixed(7));
             })
-        } else {
+            .catch((error) => {
+                console.log(error);
+                setField2Value("NA");
+            });
+        } 
+        else 
+        {
             setField2Value("");
         }
     }, [field1Value, coin1.address, coin2.address]);
@@ -257,20 +350,22 @@ function CoinSwapper(props) {
     // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
     useEffect(() => {
         const coinTimeout = setTimeout(() => {
-            console.log('props: ', props);
             console.log("Checking balances...");
 
-            if (coin1.address && coin2.address && props.network.account) {
+            if (coin1.address && coin2.address) {
                 getReserves(
                     coin1.address,
                     coin2.address,
                     props.network.factory,
                     props.network.signer,
                     props.network.account
-                ).then((data) => setReserves(data));
+                )
+                .then((data) => {
+                    setReserves(data);
+                });
             }
 
-            if (coin1.address && props.network.account && !wrongNetworkOpen) {
+            if (coin1.address && !wrongNetworkOpen) {
                 getBalanceAndSymbol(
                     props.network.account,
                     coin1.address,
@@ -278,16 +373,15 @@ function CoinSwapper(props) {
                     props.network.signer,
                     props.network.weth.address,
                     props.network.coins
-                ).then(
-                    (data) => {
-                        setCoin1({
-                            ...coin1,
-                            balance: data.balance,
-                        });
-                    }
-                );
+                )
+                .then((data) => {
+                    setCoin1({
+                        ...coin1,
+                        balance: data.balance,
+                    });
+                });
             }
-            if (coin2.address && props.network.account && !wrongNetworkOpen) {
+            if (coin2.address && !wrongNetworkOpen) {
                 getBalanceAndSymbol(
                     props.network.account,
                     coin2.address,
@@ -295,14 +389,13 @@ function CoinSwapper(props) {
                     props.network.signer,
                     props.network.weth.address,
                     props.network.coins
-                ).then(
-                    (data) => {
-                        setCoin2({
-                            ...coin2,
-                            balance: data.balance,
-                        });
-                    }
-                );
+                )
+                .then((data) => {
+                    setCoin2({
+                        ...coin2,
+                        balance: data.balance,
+                    });
+                });
             }
         }, 10000);
 
@@ -346,9 +439,9 @@ function CoinSwapper(props) {
                             />
                         </Grid>
 
-                        <IconButton onClick={switchFields} className={classes.switchButton}>
+                        {/* <IconButton onClick={switchFields} className={classes.switchButton}>
                             <SwapVerticalCircleIcon fontSize="medium" />
-                        </IconButton>
+                        </IconButton> */}
 
                         <Grid item xs={12} className={classes.fullWidth}>
                             <CoinField
@@ -409,7 +502,7 @@ function CoinSwapper(props) {
                 </Paper>
             </Container>
 
-            <Grid
+            {/* <Grid
                 container
                 className={classes.footer}
                 direction="row"
@@ -420,7 +513,7 @@ function CoinSwapper(props) {
                     My UniswapV2 | Get AUT for use in the bakerloo testnet{" "}
                     <a href="https://faucet.bakerloo.autonity.network/">here</a>
                 </p>
-            </Grid>
+            </Grid> */}
         </div>
     );
 }
