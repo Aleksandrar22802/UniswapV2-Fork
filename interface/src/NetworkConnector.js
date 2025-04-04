@@ -163,6 +163,7 @@ const NetworkConnector = (props) => {
                 if (account != network.account.current) 
                 {
                     // console.log("running createListener 2...");
+                    network.account.current = null;
                     await setupConnection();
                 }
             } catch (err) {
