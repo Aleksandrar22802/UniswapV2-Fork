@@ -35,8 +35,8 @@ function Liquidity(props) {
     const classes = useStyles();
     const [deploy, setDeploy] = React.useState(true);
 
-    console.log("Liquidity.props...");
-    console.log(props);
+    // console.log("Liquidity.props...");
+    // console.log(props);
 
     return (
         <div className="sub-page-liquidity">

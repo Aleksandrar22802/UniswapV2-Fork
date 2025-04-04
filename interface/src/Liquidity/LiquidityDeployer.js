@@ -55,8 +55,8 @@ function LiquidityDeployer(props) {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
 
-    console.log("LiquidityDeployer.props...");
-    console.log(props);
+    // console.log("LiquidityDeployer.props...");
+    // console.log(props);
 
     // Stores a record of whether their respective dialog window is open
     const [dialog1Open, setDialog1Open] = React.useState(false);
@@ -93,16 +93,16 @@ function LiquidityDeployer(props) {
 
     // Switches the top and bottom coins, this is called when users hit the swap button or select the opposite
     // token in the dialog (e.g. if coin1 is TokenA and the user selects TokenB when choosing coin2)
-    const switchFields = () => {
-        let oldField1Value = field1Value;
-        let oldField2Value = field2Value;
+    // const switchFields = () => {
+    //     let oldField1Value = field1Value;
+    //     let oldField2Value = field2Value;
 
-        setCoin1(coin2);
-        setCoin2(coin1);
-        setField1Value(oldField2Value);
-        setField2Value(oldField1Value);
-        setReserves(reserves.reverse());
-    };
+    //     setCoin1(coin2);
+    //     setCoin2(coin1);
+    //     setField1Value(oldField2Value);
+    //     setField2Value(oldField1Value);
+    //     setReserves(reserves.reverse());
+    // };
 
     // These functions take an HTML event, pull the data out and puts it into a state variable.
     const handleChange = {
@@ -179,15 +179,19 @@ function LiquidityDeployer(props) {
 
     // Called when the dialog window for coin1 exits
     const onToken1Selected = (address) => {
+        // console.log("onToken1Selected ...");
+        // console.log("address = " + address);
+
         // Close the dialog window
         setDialog1Open(false);
 
         // If the user inputs the same token, we want to switch the data in the fields
-        if (address === coin2.address) {
-            switchFields();
-        }
+        // if (address === coin2.address) {
+        //     switchFields();
+        // }
         // We only update the values if the user provides a token
-        else if (address) {
+        if (address !== undefined)
+        {
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
             getBalanceAndSymbol(
                 props.network.account,
@@ -204,6 +208,14 @@ function LiquidityDeployer(props) {
                 });
             });
         }
+        else
+        {
+            setCoin1({
+                address: undefined,
+                symbol: undefined,
+                balance: undefined,
+            });
+        }
     };
 
     // Called when the dialog window for coin2 exits
@@ -212,11 +224,12 @@ function LiquidityDeployer(props) {
         setDialog2Open(false);
 
         // If the user inputs the same token, we want to switch the data in the fields
-        if (address === coin1.address) {
-            switchFields();
-        }
+        // if (address === coin1.address) {
+        //     switchFields();
+        // }
         // We only update the values if the user provides a token
-        else if (address) {
+        if (address !== undefined)
+        {
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
             getBalanceAndSymbol(props.network.account,
                 address,
@@ -232,17 +245,25 @@ function LiquidityDeployer(props) {
                 });
             });
         }
+        else
+        {
+            setCoin2({
+                address: undefined,
+                symbol: undefined,
+                balance: undefined,
+            });
+        }
     };
 
     // This hook is called when either of the state variables `coin1.address` or `coin2.address` change.
     // This means that when the user selects a different coin to convert between, or the coins are swapped,
     // the new reserves will be calculated.
     useEffect(() => {
-        console.log(
-            "Trying to get reserves between:\n" + coin1.address + "\n" + coin2.address
-        );
-
-        if (coin1.address && coin2.address && props.network.account) {
+        if (coin1.address && coin2.address) 
+        {
+            console.log(
+                "Trying to get reserves between:\n" + coin1.address + "\n" + coin2.address
+            );
             getReserves(
                 coin1.address,
                 coin2.address,
@@ -256,6 +277,11 @@ function LiquidityDeployer(props) {
                 }
             );
         }
+        else
+        {
+            setReserves(["0.0", "0.0"]);
+            setLiquidityTokens("");
+        }
     }, [coin1.address, coin2.address, props.network.account, props.network.factory, props.network.signer]);
 
     // This hook is called when either of the state variables `field1Value`, `field2Value`, `coin1.address` or `coin2.address` change.
@@ -263,31 +289,40 @@ function LiquidityDeployer(props) {
     useEffect(() => {
         if (isButtonEnabled()) {
             console.log("Trying to preview the liquidity deployment");
-
-            quoteAddLiquidity(
-                coin1.address,
-                coin2.address,
-                field1Value,
-                field2Value,
-                props.network.factory,
-                props.network.signer
-            ).then((data) => {
-                // console.log(data);
-                console.log("TokenA in: ", data[0]);
-                console.log("TokenB in: ", data[1]);
-                console.log("Liquidity out: ", data[2]);
-                setLiquidityOut([data[0], data[1], data[2]]);
-            });
+            if (coin1.address && coin2.address)
+            {
+                quoteAddLiquidity(
+                    coin1.address,
+                    coin2.address,
+                    field1Value,
+                    field2Value,
+                    props.network.factory,
+                    props.network.signer
+                ).then((data) => {
+                    // console.log(data);
+                    console.log("TokenA in: ", data[0]);
+                    console.log("TokenB in: ", data[1]);
+                    console.log("Liquidity out: ", data[2]);
+                    setLiquidityOut([data[0], data[1], data[2]]);
+                });
+            }
+            else
+            {
+                setLiquidityOut([0, 0, 0]);
+            }
         }
     }, [coin1.address, coin2.address, field1Value, field2Value, props.network.factory, props.network.signer]);
 
-    // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
-    // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
+    /*
+    This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
+    updated. This allows them to see when a transaction completes by looking at the balance output.
+    */
     useEffect(() => {
         const coinTimeout = setTimeout(() => {
             console.log("Checking balances & Getting reserves...");
 
-            if (coin1.address && coin2.address && props.network.account) {
+            // get reserve
+            if (coin1.address && coin2.address) {
                 getReserves(
                     coin1.address,
                     coin2.address,
@@ -299,8 +334,9 @@ function LiquidityDeployer(props) {
                     setLiquidityTokens(data[2]);
                 });
             }
-
-            if (coin1.address && props.network.account && !wrongNetworkOpen) {
+    
+            // getting token1's balance and symbol
+            if (coin1.address && !wrongNetworkOpen) {
                 getBalanceAndSymbol(
                     props.network.account,
                     coin1.address,
@@ -317,7 +353,9 @@ function LiquidityDeployer(props) {
                     }
                 );
             }
-            if (coin2.address && props.network.account && !wrongNetworkOpen) {
+
+            // getting token2's balance and symbol
+            if (coin2.address && !wrongNetworkOpen) {
                 getBalanceAndSymbol(
                     props.network.account,
                     coin2.address,
@@ -355,7 +393,7 @@ function LiquidityDeployer(props) {
                 open={dialog2Open}
                 onClose={onToken2Selected}
                 coins={props.network.coins}
-                signer={props.networksigner}
+                signer={props.network.signer}
             />
             <WrongNetwork
                 open={wrongNetworkOpen}

@@ -103,41 +103,41 @@ export default function CoinDialog(props) {
     const classes = useStyles();
     const { onClose, open, coins, signer, ...others } = props;
 
-    const [address, setAddress] = React.useState("");
-    const [error, setError] = React.useState("");
+    // const [address, setAddress] = React.useState("");
+    // const [error, setError] = React.useState("");
 
     // Called when the user tries to input a custom address, this function will validate the address and will either
     // then close the dialog and return the validated address, or will display an error.
-    const submit = () => {
-        if (doesTokenExist(address, signer)) {
-            exit(address);
-        } else {
-            setError("This address is not valid");
-        }
-    };
+    // const onSubmit = () => {
+    //     if (doesTokenExist(address, signer)) {
+    //         onSelected(address);
+    //     } else {
+    //         setError("This address is not valid");
+    //     }
+    // };
 
     // Resets any fields in the dialog (in case it's opened in the future) and calls the `onClose` prop
-    const exit = (value) => {
-        setError("");
-        setAddress("");
-        onClose(value);
+    const onSelected = (address) => {
+        // setError("");
+        // setAddress("");
+        onClose(address);
     };
 
     return (
         <Dialog
             open={open}
-            onClose={() => exit(undefined)}
+            onClose={() => onSelected(undefined)}
             fullWidth
             maxWidth="sm"
             classes={{ paper: classes.dialogContainer }}
         >
-            <DialogTitle onClose={() => exit(undefined)}>Select Coin</DialogTitle>
+            <DialogTitle onClose={() => onSelected(undefined)}>Select Coin</DialogTitle>
 
             <hr className={classes.hr} />
 
             <div className={classes.coinContainer}>
                 <Grid container direction="column" spacing={1} alignContent="center">
-                    <TextField
+                    {/* <TextField
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         variant="outlined"
@@ -146,9 +146,9 @@ export default function CoinDialog(props) {
                         helperText={error}
                         fullWidth
                         className={classes.address}
-                    />
+                    /> */}
 
-                    <hr className={classes.hr} />
+                    {/* <hr className={classes.hr} /> */}
 
                     <Grid item className={classes.coinList}>
                         <Grid container direction="column">
@@ -158,7 +158,7 @@ export default function CoinDialog(props) {
                                     <CoinButton
                                         coinName={coin.name}
                                         coinAbbr={coin.abbr}
-                                        onClick={() => exit(coin.address)}
+                                        onClick={() => onSelected(coin.address)}
                                     />
                                 </Grid>
                             ))}
@@ -167,13 +167,13 @@ export default function CoinDialog(props) {
                 </Grid>
             </div>
 
-            <hr className={classes.hr} />
+            {/* <hr className={classes.hr} />
 
             <DialogActions>
-                <Button autoFocus onClick={submit} color="primary">
+                <Button autoFocus onClick={onSubmit} color="primary">
                     Enter
                 </Button>
-            </DialogActions>
+            </DialogActions> */}
         </Dialog>
     );
 }

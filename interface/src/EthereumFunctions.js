@@ -85,7 +85,14 @@ export async function getBalanceAndSymbol(
 {
     try 
     {
-        if (address === weth_address) 
+        if (Array.isArray(coins) == false) {
+            return {
+                balance: "0",
+                symbol: "",
+            };
+        }
+        
+        if (address === weth_address)
         {
             const balanceRaw = await provider.getBalance(accountAddress);
 
@@ -99,7 +106,15 @@ export async function getBalanceAndSymbol(
             const token = new Contract(address, ERC20.abi, signer);
             const tokenDecimals = await getDecimals(token);
             const balanceRaw = await token.balanceOf(accountAddress);
-            const symbol = await token.symbol();
+
+            // const symbol = await token.symbol();
+            let symbol = "";
+            for (let n = 0; n < coins.length; n++) {
+                if (coins[n].address == address) {
+                    symbol = coins[n].name;
+                    break;
+                }
+            }
 
             return {
                 balance: balanceRaw * 10 ** (-tokenDecimals),

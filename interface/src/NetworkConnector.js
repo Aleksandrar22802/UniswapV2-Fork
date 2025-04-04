@@ -158,11 +158,11 @@ const NetworkConnector = (props) => {
     const createListener = async () => {
         return setInterval(async () => {
             try {
-                console.log("running createListener 1...");
+                // console.log("running createListener 1...");
                 let account = await getAccount();
                 if (account != network.account.current) 
                 {
-                    console.log("running createListener 2...");
+                    // console.log("running createListener 2...");
                     await setupConnection();
                 }
             } catch (err) {
