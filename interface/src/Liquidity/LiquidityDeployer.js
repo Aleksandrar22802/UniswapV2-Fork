@@ -136,9 +136,9 @@ function LiquidityDeployer(props) {
         return (
             coin1.address &&
             coin2.address &&
-            parsedInput1 !== NaN &&
+            isNaN(parsedInput1) === false &&
             0 < parsedInput1 &&
-            parsedInput2 !== NaN &&
+            isNaN(parsedInput2) === false &&
             0 < parsedInput2 &&
             parsedInput1 <= coin1.balance &&
             parsedInput2 <= coin2.balance
@@ -160,21 +160,22 @@ function LiquidityDeployer(props) {
             props.network.account,
             props.network.signer
         )
-            .then(() => {
-                setLoading(false);
+        .then(() => {
+            setLoading(false);
 
-                // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
-                setField1Value("");
-                setField2Value("");
-                enqueueSnackbar("Deployment Successful", { variant: "success" });
-            })
-            .catch((e) => {
-                setLoading(false);
-                enqueueSnackbar("Deployment Failed (" + e.message + ")", {
-                    variant: "error",
-                    autoHideDuration: 10000,
-                });
+            // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
+            setField1Value("");
+            setField2Value("");
+            enqueueSnackbar("Deployment Successful", { variant: "success" });
+        })
+        .catch((error) => {
+            console.log(error);
+            setLoading(false);
+            enqueueSnackbar("Deployment Failed (" + error.message + ")", {
+                variant: "error",
+                autoHideDuration: 10000,
             });
+        });
     };
 
     // Called when the dialog window for coin1 exits
@@ -192,6 +193,16 @@ function LiquidityDeployer(props) {
         // We only update the values if the user provides a token
         if (address !== undefined)
         {
+            if (address == coin2.address)
+            {
+                setCoin1({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+                return;
+            }
+
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
             getBalanceAndSymbol(
                 props.network.account,
@@ -200,11 +211,20 @@ function LiquidityDeployer(props) {
                 props.network.signer,
                 props.network.weth.address,
                 props.network.coins
-            ).then((data) => {
+            )
+            .then((data) => {
                 setCoin1({
                     address: address,
                     symbol: data.symbol,
                     balance: data.balance,
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+                setCoin1({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
                 });
             });
         }
@@ -230,6 +250,16 @@ function LiquidityDeployer(props) {
         // We only update the values if the user provides a token
         if (address !== undefined)
         {
+            if (address == coin1.address)
+            {
+                setCoin2({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+                return;
+            }
+    
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
             getBalanceAndSymbol(props.network.account,
                 address,
@@ -237,11 +267,20 @@ function LiquidityDeployer(props) {
                 props.network.signer,
                 props.network.weth.address,
                 props.network.coins
-            ).then((data) => {
+            )
+            .then((data) => {
                 setCoin2({
                     address: address,
                     symbol: data.symbol,
                     balance: data.balance,
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+                setCoin2({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
                 });
             });
         }
@@ -270,12 +309,16 @@ function LiquidityDeployer(props) {
                 props.network.factory,
                 props.network.signer,
                 props.network.account
-            ).then(
-                (data) => {
-                    setReserves([data[0], data[1]]);
-                    setLiquidityTokens(data[2]);
-                }
-            );
+            )
+            .then((data) => {
+                setReserves([data[0], data[1]]);
+                setLiquidityTokens(data[2]);
+            })
+            .catch((error) => {
+                console.log(error);
+                setReserves(["0.0", "0.0"]);
+                setLiquidityTokens("");
+            });
         }
         else
         {
@@ -298,12 +341,24 @@ function LiquidityDeployer(props) {
                     field2Value,
                     props.network.factory,
                     props.network.signer
-                ).then((data) => {
+                )
+                .then((data) => {
                     // console.log(data);
-                    console.log("TokenA in: ", data[0]);
-                    console.log("TokenB in: ", data[1]);
-                    console.log("Liquidity out: ", data[2]);
-                    setLiquidityOut([data[0], data[1], data[2]]);
+                    // console.log("TokenA in: ", data[0]);
+                    // console.log("TokenB in: ", data[1]);
+                    // console.log("Liquidity out: ", data[2]);
+                    if (Array.isArray(data) == true) {
+                        setLiquidityOut([data[0], data[1], data[2]]);
+                    } 
+                    else 
+                    {
+                        console.log("data is not array...");
+                        setLiquidityOut([0, 0, 0]);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setLiquidityOut([0, 0, 0]);
                 });
             }
             else

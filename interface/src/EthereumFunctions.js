@@ -91,7 +91,7 @@ export async function getBalanceAndSymbol(
                 symbol: "",
             };
         }
-        
+
         if (address === weth_address)
         {
             const balanceRaw = await provider.getBalance(accountAddress);
@@ -241,7 +241,6 @@ export async function fetchReserves(address1, address2, pair, signer)
 {
     try 
     {
-
         // Get decimals for each coin
         const coin1 = new Contract(address1, ERC20.abi, signer);
         const coin2 = new Contract(address2, ERC20.abi, signer);
@@ -292,7 +291,6 @@ export async function getReserves(
 
         if (pairAddress !== '0x0000000000000000000000000000000000000000') 
         {
-
             const reservesRaw = await fetchReserves(address1, address2, pair, signer);
             const liquidityTokens_BN = await pair.balanceOf(accountAddress);
             const liquidityTokens = Number(

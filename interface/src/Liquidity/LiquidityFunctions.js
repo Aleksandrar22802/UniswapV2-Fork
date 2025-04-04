@@ -47,16 +47,16 @@ export async function addLiquidity(
 
     const wethAddress = await routerContract.WETH();
 
-    console.log([
-        address1,
-        address2,
-        amountIn1,
-        amountIn2,
-        amount1Min,
-        amount2Min,
-        account,
-        deadline,
-    ]);
+    // console.log([
+    //     address1,
+    //     address2,
+    //     amountIn1,
+    //     amountIn2,
+    //     amount1Min,
+    //     amount2Min,
+    //     account,
+    //     deadline,
+    // ]);
 
     if (address1 === wethAddress) {
         // Eth + Token
@@ -208,14 +208,16 @@ async function quoteMintLiquidity(
     amountA,
     amountB,
     factory,
-    signer
-) {
+    signer) 
+{
     const MINIMUM_LIQUIDITY = 1000;
     let _reserveA = 0;
     let _reserveB = 0;
     let totalSupply = 0;
-    [_reserveA, _reserveB, totalSupply] = await factory.getPair(address1, address2).then(async (pairAddress) => {
-        if (pairAddress !== '0x0000000000000000000000000000000000000000') {
+    [_reserveA, _reserveB, totalSupply] = await factory.getPair(address1, address2)
+    .then(async (pairAddress) => {
+        if (pairAddress !== '0x0000000000000000000000000000000000000000') 
+        {
             const pair = new Contract(pairAddress, PAIR.abi, signer);
 
             const reservesRaw = await fetchReserves(address1, address2, pair, signer); // Returns the reserves already formated as ethers
@@ -225,7 +227,9 @@ async function quoteMintLiquidity(
             const _totalSupply = await pair.totalSupply();
             const totalSupply = Number(ethers.utils.formatEther(_totalSupply));
             return [reserveA, reserveB, totalSupply]
-        } else {
+        } 
+        else 
+        {
             return [0, 0, 0]
         }
     });
@@ -259,9 +263,8 @@ export async function quoteAddLiquidity(
     amountADesired,
     amountBDesired,
     factory,
-    signer
-) {
-
+    signer) 
+{
     const pairAddress = await factory.getPair(address1, address2);
     const pair = new Contract(pairAddress, PAIR.abi, signer);
 
@@ -269,7 +272,8 @@ export async function quoteAddLiquidity(
     const reserveA = reservesRaw[0];
     const reserveB = reservesRaw[1];
 
-    if (reserveA === 0 && reserveB === 0) {
+    if (reserveA === 0 && reserveB === 0) 
+    {
         const amountOut = await quoteMintLiquidity(
             address1,
             address2,
@@ -282,22 +286,31 @@ export async function quoteAddLiquidity(
             amountBDesired,
             amountOut.toPrecision(8),
         ];
-    } else {
-        const amountBOptimal = quote(amountADesired, reserveA, reserveB);
-        if (amountBOptimal <= amountBDesired) {
-            const amountOut = await quoteMintLiquidity(
-                address1,
-                address2,
-                amountADesired,
-                amountBOptimal,
-                factory,
-                signer);
-            return [
-                amountADesired,
-                amountBOptimal,
-                amountOut.toPrecision(8),
-            ];
-        } else {
+    } 
+    else 
+    {
+        if (reserveA !== 0)
+        {
+            const amountBOptimal = quote(amountADesired, reserveA, reserveB);
+            if (amountBOptimal <= amountBDesired) 
+            {
+                const amountOut = await quoteMintLiquidity(
+                    address1,
+                    address2,
+                    amountADesired,
+                    amountBOptimal,
+                    factory,
+                    signer);
+                return [
+                    amountADesired,
+                    amountBOptimal,
+                    amountOut.toPrecision(8),
+                ];
+            } 
+        }
+
+        if (reserveB !== 0)
+        {
             const amountAOptimal = quote(
                 amountBDesired,
                 reserveB,
@@ -316,6 +329,12 @@ export async function quoteAddLiquidity(
                 amountOut.toPrecision(8),
             ];
         }
+
+        return [
+            0,
+            0,
+            0,
+        ];
     }
 }
 
