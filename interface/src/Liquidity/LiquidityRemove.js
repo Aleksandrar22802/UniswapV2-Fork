@@ -91,11 +91,11 @@ function LiquidityRemover(props) {
 
     // Switches the top and bottom coins, this is called when users hit the swap button or select the opposite
     // token in the dialog (e.g. if coin1 is TokenA and the user selects TokenB when choosing coin2)
-    const switchFields = () => {
-        setCoin1(coin2);
-        setCoin2(coin1);
-        setReserves(reserves.reverse());
-    };
+    // const switchFields = () => {
+    //     setCoin1(coin2);
+    //     setCoin2(coin1);
+    //     setReserves(reserves.reverse());
+    // };
 
     // These functions take an HTML event, pull the data out and puts it into a state variable.
     const handleChange = {
@@ -119,19 +119,18 @@ function LiquidityRemover(props) {
 
     // Determines whether the button should be enabled or not
     const isButtonEnabled = () => {
-
         // If both coins have been selected, and a valid float has been entered for both, which are less than the user's balances, then return true
         const parsedInput = parseFloat(field1Value);
         return (
             coin1.address &&
             coin2.address &&
-            parsedInput !== NaN &&
+            isNaN(parsedInput) !== false &&
             0 < parsedInput &&
             parsedInput <= liquidityTokens
         );
     };
 
-    const remove = () => {
+    const onRemove = () => {
         console.log("Attempting to remove liquidity...");
         setLoading(true);
 
@@ -146,20 +145,20 @@ function LiquidityRemover(props) {
             props.network.signer,
             props.network.factory
         )
-            .then(() => {
-                setLoading(false);
+        .then(() => {
+            setLoading(false);
 
-                // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
-                setField1Value("");
-                enqueueSnackbar("Removal Successful", { variant: "success" });
-            })
-            .catch((e) => {
-                setLoading(false);
-                enqueueSnackbar("Deployment Failed (" + e.message + ")", {
-                    variant: "error",
-                    autoHideDuration: 10000,
-                });
+            // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
+            setField1Value("");
+            enqueueSnackbar("Removal Successful", { variant: "success" });
+        })
+        .catch((error) => {
+            setLoading(false);
+            enqueueSnackbar("Deployment Failed (" + error.message + ")", {
+                variant: "error",
+                autoHideDuration: 10000,
             });
+        });
     };
 
     // Called when the dialog window for coin1 exits
@@ -168,11 +167,22 @@ function LiquidityRemover(props) {
         setDialog1Open(false);
 
         // If the user inputs the same token, we want to switch the data in the fields
-        if (address === coin2.address) {
-            switchFields();
-        }
+        // if (address === coin2.address) {
+        //     switchFields();
+        // }
         // We only update the values if the user provides a token
-        else if (address) {
+        if (address) 
+        {
+            if (address == coin2.address)
+            {
+                setCoin1({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+                return;
+            }
+    
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
             getBalanceAndSymbol(
                 props.network.account,
@@ -181,12 +191,29 @@ function LiquidityRemover(props) {
                 props.network.signer,
                 props.network.weth.address,
                 props.network.coins
-            ).then((data) => {
+            )
+            .then((data) => {
                 setCoin1({
                     address: address,
                     symbol: data.symbol,
                     balance: data.balance,
                 });
+            })
+            .catch((error) => {
+                console.log(error);
+                setCoin1({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+            });
+        }
+        else
+        {
+            setCoin1({
+                address: undefined,
+                symbol: undefined,
+                balance: undefined,
             });
         }
     };
@@ -197,11 +224,22 @@ function LiquidityRemover(props) {
         setDialog2Open(false);
 
         // If the user inputs the same token, we want to switch the data in the fields
-        if (address === coin1.address) {
-            switchFields();
-        }
+        // if (address === coin1.address) {
+        //     switchFields();
+        // }
         // We only update the values if the user provides a token
-        else if (address) {
+        if (address) 
+        {
+            if (address == coin1.address)
+            {
+                setCoin2({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+                return;
+            }
+    
             // Getting some token data is async, so we need to wait for the data to return, hence the promise
             getBalanceAndSymbol(props.network.account,
                 address,
@@ -209,12 +247,30 @@ function LiquidityRemover(props) {
                 props.network.signer,
                 props.network.weth.address,
                 props.network.coins
-            ).then((data) => {
+            )
+            .then((data) => {
                 setCoin2({
                     address: address,
                     symbol: data.symbol,
                     balance: data.balance,
                 });
+            })
+            .catch((error) => {
+                console.log(error);
+                setCoin2({
+                    address: undefined,
+                    symbol: undefined,
+                    balance: undefined,
+                });
+            })
+            ;
+        }
+        else
+        {
+            setCoin2({
+                address: undefined,
+                symbol: undefined,
+                balance: undefined,
             });
         }
     };
@@ -223,39 +279,56 @@ function LiquidityRemover(props) {
     // This means that when the user selects a different coin to convert between, or the coins are swapped,
     // the new reserves will be calculated.
     useEffect(() => {
-        console.log(
-            "Trying to get reserves between:\n" + coin1.address + "\n" + coin2.address
-        );
-
-        if (coin1.address && coin2.address && props.network.account) {
+        if (coin1.address && coin2.address) 
+        {
+            console.log(
+                "Trying to get reserves between:\n" + coin1.address + "\n" + coin2.address
+            );    
             getReserves(
                 coin1.address,
                 coin2.address,
                 props.network.factory,
                 props.network.signer,
-                props.network.account).then(
-                    (data) => {
-                        setReserves([data[0], data[1]]);
-                        setLiquidityTokens(data[2]);
-                    }
-                );
+                props.network.account
+            )
+            .then((data) => {
+                setReserves([data[0], data[1]]);
+                setLiquidityTokens(data[2]);
+            })
+            .catch((error) => {
+                console.log(error);
+                setReserves(["0.0", "0.0"]);
+                setLiquidityTokens("");
+            });
         }
     }, [coin1.address, coin2.address, props.network.account, props.network.factory, props.network.signer]);
 
     // This hook is called when either of the state variables `field1Value`, `coin1.address` or `coin2.address` change.
     // It will give a preview of the liquidity removal.
     useEffect(() => {
-        if (isButtonEnabled()) {
+        if (isButtonEnabled()) 
+        {
             console.log("Trying to preview the liquidity removal");
-            quoteRemoveLiquidity(
-                coin1.address,
-                coin2.address,
-                field1Value,
-                props.network.factory,
-                props.network.signer
-            ).then((data) => {
-                setTokensOut(data);
-            });
+            if (coin1.address && coin2.address)
+            {
+                quoteRemoveLiquidity(
+                    coin1.address,
+                    coin2.address,
+                    field1Value,
+                    props.network.factory,
+                    props.network.signer
+                ).then((data) => {
+                    setTokensOut(data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setTokensOut([0, 0, 0]);
+                });
+            }
+            else
+            {                
+                setTokensOut([0, 0, 0]);
+            }
         }
     }, [coin1.address, coin2.address, field1Value, props.network.factory, props.network.signer]);
 
@@ -266,50 +339,53 @@ function LiquidityRemover(props) {
         const coinTimeout = setTimeout(() => {
             console.log("Checking balances & Getting reserves...");
 
-            if (coin1.address && coin2.address && props.network.account) {
+            if (coin1.address && coin2.address) 
+            {
                 getReserves(
                     coin1.address,
                     coin2.address,
                     props.network.factory,
                     props.network.signer,
                     props.network.account
-                ).then((data) => {
+                )
+                .then((data) => {
                     setReserves([data[0], data[1]]);
                     setLiquidityTokens(data[2]);
                 });
             }
 
-            if (coin1.address && props.network.account && !wrongNetworkOpen) {
+            if (coin1.address && !wrongNetworkOpen) 
+            {
                 getBalanceAndSymbol(
                     props.network.account,
                     coin1.address, props.network.provider,
                     props.network.signer,
                     props.network.weth.address,
                     props.network.coins
-                ).then(
-                    (data) => {
-                        setCoin1({
-                            ...coin1,
-                            balance: data.balance,
-                        });
-                    }
-                );
+                )
+                .then((data) => {
+                    setCoin1({
+                        ...coin1,
+                        balance: data.balance,
+                    });
+                });
             }
-            if (coin2.address && props.network.account && !wrongNetworkOpen) {
+
+            if (coin2.address && !wrongNetworkOpen) 
+            {
                 getBalanceAndSymbol(props.network.account,
                     coin2.address,
                     props.network.provider,
                     props.network.signer,
                     props.network.weth.address,
                     props.network.coins
-                ).then(
-                    (data) => {
-                        setCoin2({
-                            ...coin2,
-                            balance: data.balance,
-                        });
-                    }
-                );
+                )
+                .then((data) => {
+                    setCoin2({
+                        ...coin2,
+                        balance: data.balance,
+                    });
+                });
             }
         }, 10000);
 
@@ -467,7 +543,7 @@ function LiquidityRemover(props) {
                     valid={isButtonEnabled()}
                     success={false}
                     fail={false}
-                    onClick={remove}
+                    onClick={onRemove}
                 >
                     <ArrowDownwardIcon className={classes.buttonIcon} />
                     Remove

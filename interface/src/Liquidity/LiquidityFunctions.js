@@ -25,8 +25,8 @@ export async function addLiquidity(
     amount2min,
     routerContract,
     account,
-    signer
-) {
+    signer) 
+{
     const token1 = new Contract(address1, ERC20.abi, signer);
     const token2 = new Contract(address2, ERC20.abi, signer);
 

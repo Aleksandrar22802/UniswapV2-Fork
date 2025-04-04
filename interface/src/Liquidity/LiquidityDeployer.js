@@ -191,7 +191,7 @@ function LiquidityDeployer(props) {
         //     switchFields();
         // }
         // We only update the values if the user provides a token
-        if (address !== undefined)
+        if (address)
         {
             if (address == coin2.address)
             {
@@ -248,7 +248,7 @@ function LiquidityDeployer(props) {
         //     switchFields();
         // }
         // We only update the values if the user provides a token
-        if (address !== undefined)
+        if (address)
         {
             if (address == coin1.address)
             {
@@ -330,7 +330,8 @@ function LiquidityDeployer(props) {
     // This hook is called when either of the state variables `field1Value`, `field2Value`, `coin1.address` or `coin2.address` change.
     // It will give a preview of the liquidity deployment.
     useEffect(() => {
-        if (isButtonEnabled()) {
+        if (isButtonEnabled()) 
+        {
             console.log("Trying to preview the liquidity deployment");
             if (coin1.address && coin2.address)
             {
@@ -384,7 +385,8 @@ function LiquidityDeployer(props) {
                     props.network.factory,
                     props.network.signer,
                     props.network.account
-                ).then((data) => {
+                )
+                .then((data) => {
                     setReserves([data[0], data[1]]);
                     setLiquidityTokens(data[2]);
                 });
@@ -399,14 +401,13 @@ function LiquidityDeployer(props) {
                     props.network.signer,
                     props.network.weth.address,
                     props.network.coins
-                ).then(
-                    (data) => {
-                        setCoin1({
-                            ...coin1,
-                            balance: data.balance,
-                        });
-                    }
-                );
+                )
+                .then((data) => {
+                    setCoin1({
+                        ...coin1,
+                        balance: data.balance,
+                    });
+                });
             }
 
             // getting token2's balance and symbol
@@ -418,14 +419,13 @@ function LiquidityDeployer(props) {
                     props.network.signer,
                     props.network.weth.address,
                     props.network.coins
-                ).then(
-                    (data) => {
-                        setCoin2({
-                            ...coin2,
-                            balance: data.balance,
-                        });
-                    }
-                );
+                )
+                .then((data) => {
+                    setCoin2({
+                        ...coin2,
+                        balance: data.balance,
+                    });
+                });
             }
         }, 10000);
 
