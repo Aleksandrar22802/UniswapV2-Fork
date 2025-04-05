@@ -21,8 +21,8 @@ const styles = (theme) => ({
     },
     title: {
         textAlign: "center",
-        padding: theme.spacing(0.5),
-        marginBottom: theme.spacing(1),
+        padding: theme.spacing(2),
+        marginBottom: theme.spacing(0),
     },
     footer: {
         marginTop: "155px",

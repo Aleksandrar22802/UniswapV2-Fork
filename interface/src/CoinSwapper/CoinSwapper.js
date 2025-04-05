@@ -46,7 +46,7 @@ const styles = (theme) => ({
     },
     title: {
         textAlign: "center",
-        padding: theme.spacing(0.5),
+        padding: theme.spacing(2),
         marginBottom: theme.spacing(1),
     },
     hr: {
