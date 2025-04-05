@@ -199,10 +199,10 @@ function ConnectWalletPage() {
         controls.minDistance = 0.1;
         controls.maxDistance = 50;
 
-        var geometry = new THREE.BoxGeometry(1, 1, 1);
-        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        var cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
+        // var geometry = new THREE.BoxGeometry(1, 1, 1);
+        // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        // var cube = new THREE.Mesh(geometry, material);
+        // scene.add(cube);
 
         // camera.position.z = 5;
         var animate = function () {
