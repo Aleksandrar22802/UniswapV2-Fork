@@ -70,8 +70,7 @@ body {
 }
 
 .sub-page-liquidity,
-.sub-page-swap,
-.sub-page-connect {
+.sub-page-swap {
     /* background-color: rgb(50, 50, 50); */
     padding-top: 30px;
 }
@@ -83,6 +82,39 @@ body {
 }
 
 .sub-page-connect {
+
+    position: relative;
+
+    /* border-style: solid;
+    border-width: 5px;
+    border-color: blue; */
+
+    .desc-connect {
+        position: absolute;
+        top: 200px;
+        left: 0px;
+        width: 100%;
+
+        z-index: 100 !important;
+
+        /* border-style: solid;
+        border-width: 5px;
+        border-color: blue; */
+
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        & span {
+            text-align: center;
+            font-size: 50px;
+            color: rgb(255, 255, 255);
+        }
+    }
+}
+
+.canvas-connect {
     width: 100% !important;
     max-width: 100% !important;
     min-height: calc(100vh - 100px) !important;
@@ -91,20 +123,9 @@ body {
     justify-content: center !important;
     align-items: flex-start !important;
 
-    padding-top: 100px;
+    /* padding-top: 100px; */
 
     background-color: rgb(50, 50, 50);
-
-    color: rgb(255, 255, 255);
-    font-size: 36px;
-
-    & span {
-        text-align: center;
-
-        /* border-style: solid;
-        border-width: 5px;
-        border-color: blue; */
-    }
 
     /* border-style: solid;
     border-width: 5px;
